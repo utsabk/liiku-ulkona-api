@@ -1,17 +1,26 @@
 {
   "name": "liiku-ulkona-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "ExpressJS API to listen resquests from clients",
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "node",
+    "expressJS",
+    "mongoose",
+    "MongoDB",
+    "fetch API"
+  ],
   "author": "utsabk",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "mongoose": "^6.0.9"
+    "mongoose": "^6.0.9",
+    "node-fetch": "^3.0.0"
   }
 }
