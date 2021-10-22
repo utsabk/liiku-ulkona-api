@@ -14,10 +14,10 @@ const typeCodesString = typeCodes
 
 const cityCodeString = `cityCodes=${cityCodes.Helsinki}`;
 
-const activitiyURL = `${process.env.API_URL}sports-places?lang=en&${fieldsString}&${cityCodeString}`;
+const URL = `${process.env.API_URL}sports-places?lang=en&${fieldsString}&${cityCodeString}`;
 
 const fetchActivities = async () => {
-  const activities = await fetchResources(activitiyURL);
+  const activities = await fetchResources(URL);
   return activities;
 };
 
