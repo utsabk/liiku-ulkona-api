@@ -8,6 +8,10 @@ const app = express();
 
 app.use('/activity', activityRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
 app.listen(process.env.PORT, () => {
   console.log('listening on port', process.env.PORT);
 });
