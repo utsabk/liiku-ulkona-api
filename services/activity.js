@@ -70,4 +70,12 @@ const writeToDB = async (req, res) => {
   }
 };
 
-export { writeToDB };
+const getAll = async () => {
+  try {
+    return await Activity.find()
+  } catch (err) {
+    throw new Error('Failed to get data from database', err);
+  }
+};
+
+export { writeToDB, getAll };
