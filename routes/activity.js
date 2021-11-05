@@ -6,4 +6,6 @@ import * as controller from '../controllers/activityController.js';
 
 router.get('/', controller.getAll);
 
+router.get('/search', controller.searchActivityType);
+
 export default router;

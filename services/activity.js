@@ -33,7 +33,6 @@ const getEntireActivityList = async (pageNo = 1) => {
   return results;
 };
 
-
 const writeToDB = async (req, res) => {
   const activities = await getEntireActivityList();
 
@@ -86,9 +85,25 @@ const writeToDB = async (req, res) => {
   }
 };
 
-const searchActivities = async (query) => {
+const searchActivityType = async (text) => {
   try {
-    console.log('IM inside search');
+    let query = [
+    //  { name: { $regex: new RegExp(text, 'i') } },
+      { sportType: { $regex: new RegExp(text, 'i') } },
+    ];
+
+    console.log('query', query);
+
+   // find (), first argument is the query filter (also known as conditions)
+   // second argument is the query projection, which defines what fields to include or exclude from the query
+
+    const results = await Activity.find(
+      { $or: query },
+      { sportType: 1 } // only return sportType property from the object
+    );
+
+   return [...new Set(results.map(obj => obj.sportType))]; // get distinct sportType value from the array
+
   } catch (err) {
     throw new Error('Failed to search activities from database', err);
   }
@@ -105,7 +120,7 @@ const getAll = async () => {
 export {
   writeToDB,
   getAll,
-  searchActivities,
+  searchActivityType,
   fetchActivities,
   getEntireActivityList,
 };

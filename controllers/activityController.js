@@ -10,4 +10,18 @@ const getAll = async (req, res, next) => {
   }
 };
 
-export { getAll };
+const searchActivityType = async (req, res, next) => {
+  try {
+    const query = req.query.name;
+
+    const search = await service.searchActivityType(query);
+
+    if (search) {
+      res.json(search);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export { getAll, searchActivityType };
