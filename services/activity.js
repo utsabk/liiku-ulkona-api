@@ -101,8 +101,7 @@ const searchActivityType = async (text) => {
       { $or: query },
       { sportType: 1 } // only return sportType property from the object
     );
-
-   return [...new Set(results.map(obj => obj.sportType))]; // get distinct sportType value from the array
+   return [...new Map(results.map(obj => [obj['sportType'], obj])).values()]; // get distinct sportType value from the array
 
   } catch (err) {
     throw new Error('Failed to search activities from database', err);
