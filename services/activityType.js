@@ -6,12 +6,20 @@ import ActivityType from '../models/ActivitiesTypes.js';
 const URL = `${process.env.API_URL}sports-place-types?lang=en`;
 
 const getActivityTypes = async () => {
-  const types = await fetchResources(URL);
-  return types;
+  try {
+    const types = await fetchResources(URL);
+    return types;
+  } catch (err) {
+    throw new Error(`Error fetching activity types from API: ${err}`);
+  }
 };
 
-const writeToDB = async () => {
+const writeActivityTypes = async (req, res) => {
   const types = await getActivityTypes();
+
+  console.log('activity types collection', types.length);
+
+  ActivityType.collection.drop(); // Drop table before writing
 
   try {
     types.forEach(async (type) => {
@@ -19,9 +27,12 @@ const writeToDB = async () => {
         ...type,
       });
 
-      await myType.save();
-      mongoose.set('debug', true);
+      await myType.save((err, doc) => {
+        if (err) return console.err(err);
+        //  console.log('Document inserted succussfully!');
+      });
     });
+    res.send('Activity types inserted succussfully!');
   } catch (err) {
     console.log('Error while saving activity-types', err);
   }
@@ -41,7 +52,7 @@ const searchActivityType = async (text) => {
 
     const results = await ActivityType.find(
       { $or: query },
-      { name: 1 } // only return sportType property from the object
+      { typeCode: 1, name: 1 } // only return sportType property from the object
     );
     return [...new Map(results.map((obj) => [obj['name'], obj])).values()]; // get distinct sportType value from the array
   } catch (err) {
@@ -49,4 +60,4 @@ const searchActivityType = async (text) => {
   }
 };
 
-export { getActivityTypes, searchActivityType, writeToDB };
+export { getActivityTypes, searchActivityType, writeActivityTypes };

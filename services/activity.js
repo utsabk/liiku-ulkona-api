@@ -23,65 +23,43 @@ const fetchActivities = async (pageNo = 1) => {
 };
 
 const getEntireActivityList = async (pageNo = 1) => {
-  console.log('Retreiving data from API for page : ', pageNo);
+  try {
+    console.log('Retreiving data from API for page : ', pageNo);
 
-  const results = await fetchActivities(pageNo);
+    const results = await fetchActivities(pageNo);
 
-  if (results.length > 0) {
-    return results.concat(await getEntireActivityList(pageNo + 1));
+    if (results.length > 0) {
+      return results.concat(await getEntireActivityList(pageNo + 1));
+    }
+    console.log('Data fetch complete');
+    return results;
+  } catch (err) {
+    throw new Error('Error fetching data from external API', err);
   }
-  return results;
 };
 
-const writeToDB = async (req, res) => {
+const writeActivities = async (req, res) => {
   const activities = await getEntireActivityList();
+
+  console.log('activity collection', activities.length);
+
+  Activity.collection.drop(); // Drop table before writing
 
   try {
     activities.forEach(async (activity) => {
       const myActivity = new Activity({
-        ...(activity.name && { name: activity.name }),
-        sportType: activity.type.name,
+        ...activity,
         coordinates: activity.location.coordinates.wgs84,
-        ...(activity.properties.infoFi && {
-          infoFi: activity.properties.infoFi,
-        }),
-
-        contact: {
-          ...(activity.email && {
-            email: activity.email,
-          }),
-          ...(activity.phoneNumber && {
-            phone: activity.phoneNumber,
-          }),
-          ...(activity.www && {
-            webAddress: activity.www,
-          }),
-        },
-        address: {
-          ...(activity.location.address && {
-            address: activity.location.address,
-          }),
-          ...(activity.location.postalCode && {
-            postalCode: activity.location.postalCode,
-          }),
-          ...(activity.location.postalOffice && {
-            postalOffice: activity.location.postalOffice,
-          }),
-          ...(activity.location.city.name && {
-            city: activity.location.city.name,
-          }),
-          ...(activity.location.neighborhood && {
-            neighborhood: activity.location.neighborhood,
-          }),
-        },
       });
-
-      await myActivity.save();
-      mongoose.set('debug', true);
+      await myActivity.save((err, doc) => {
+        if (err) return console.err(err);
+      //  console.log('Document inserted succussfully!');
+      });
     });
-    res.send('Data successfully saved');
+
+    res.send('Activities inserted succussfully!');
   } catch (err) {
-    console.log('Error while saving', err);
+    throw new Error('Error while saving to activities', err);
   }
 };
 
@@ -93,9 +71,4 @@ const getAll = async () => {
   }
 };
 
-export {
-  writeToDB,
-  getAll,
-  fetchActivities,
-  getEntireActivityList,
-};
+export { writeActivities, getAll, fetchActivities, getEntireActivityList };
