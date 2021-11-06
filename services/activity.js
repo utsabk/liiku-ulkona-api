@@ -53,13 +53,22 @@ const writeActivities = async (req, res) => {
       });
       await myActivity.save((err, doc) => {
         if (err) return console.err(err);
-      //  console.log('Document inserted succussfully!');
+        //  console.log('Document inserted succussfully!');
       });
     });
 
     res.send('Activities inserted succussfully!');
   } catch (err) {
     throw new Error('Error while saving to activities', err);
+  }
+};
+
+const searchActivityWithCode = async (code) => {
+  try {
+    const result = await Activity.find({ 'type.typeCode': { $eq: code } }); // The $eq query operator checks exact equality
+    return result;
+  } catch (err) {
+    throw new Error('Error while activity search');
   }
 };
 
@@ -71,4 +80,10 @@ const getAll = async () => {
   }
 };
 
-export { writeActivities, getAll, fetchActivities, getEntireActivityList };
+export {
+  writeActivities,
+  getAll,
+  fetchActivities,
+  getEntireActivityList,
+  searchActivityWithCode,
+};

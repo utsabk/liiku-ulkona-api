@@ -40,20 +40,15 @@ const writeActivityTypes = async (req, res) => {
 
 const searchActivityType = async (text) => {
   try {
-    let query = [
-      //  { name: { $regex: new RegExp(text, 'i') } },
-      { name: { $regex: new RegExp(text, 'i') } },
-    ];
-
-    console.log('query', query);
-
     // find (), first argument is the query filter (also known as conditions)
     // second argument is the query projection, which defines what fields to include or exclude from the query
 
-    const results = await ActivityType.find(
-      { $or: query },
-      { typeCode: 1, name: 1 } // only return sportType property from the object
-    );
+    const results = await ActivityType.find({
+      name: { $regex: new RegExp(text, 'i') },
+    })
+      .select({ typeCode: 1, name: 1 })
+      .sort(); // only return typecode & name property from the object
+
     return [...new Map(results.map((obj) => [obj['name'], obj])).values()]; // get distinct sportType value from the array
   } catch (err) {
     throw new Error('Failed to search activities types from database', err);
