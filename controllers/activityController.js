@@ -1,9 +1,11 @@
 'use strict';
-import * as service from '../services/activity.js';
+import * as activityService from '../services/activity.js';
+import * as activityTypesService from '../services/activityType.js';
+
 
 const getAll = async (req, res, next) => {
   try {
-    const response = await service.getAll();
+    const response = await activityService.getAll();
     res.json(response);
   } catch (e) {
     next(e);
@@ -14,7 +16,7 @@ const searchActivityType = async (req, res, next) => {
   try {
     const query = req.query.name;
 
-    const search = await service.searchActivityType(query);
+    const search = await activityTypesService.searchActivityType(query);
 
     if (search) {
       res.json(search);
