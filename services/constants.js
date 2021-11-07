@@ -1,7 +1,9 @@
 const sportPlacesFields = [
+  'name',
   'type.name',
   'type.typeCode',
   'location.coordinates.wgs84',
+  'location.address'
 ];
 
 const typeCodes = ['1120', '1170']; // Activity Codes

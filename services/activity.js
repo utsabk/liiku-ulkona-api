@@ -41,7 +41,7 @@ const getEntireActivityList = async (pageNo = 1) => {
 const writeActivities = async (req, res) => {
   const activities = await getEntireActivityList();
 
-  console.log('activity collection', activities.length);
+  console.log('activity collection', activities);
 
   Activity.collection.drop(); // Drop table before writing
 
@@ -49,7 +49,10 @@ const writeActivities = async (req, res) => {
     activities.forEach(async (activity) => {
       const myActivity = new Activity({
         ...activity,
-        coordinates: activity.location.coordinates.wgs84,
+        location: {
+          address: activity.location.address,
+          coordinates: activity.location.coordinates.wgs84,
+        },
       });
       await myActivity.save((err, doc) => {
         if (err) return console.err(err);

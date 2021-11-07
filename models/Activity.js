@@ -4,14 +4,20 @@ const { Schema } = mongoose;
 
 const ActivitySchema = new Schema({
   sportsPlaceId: Number,
+  name:String,
+  address:String,
   type: {
     name: String,
     typeCode: Number,
   },
-  coordinates: {
-    lon: Number,
-    lat: Number,
-  },
+  location:{
+    address:String,
+    coordinates: {
+      lon: Number,
+      lat: Number,
+    },
+  }
+  
 });
 
 export default mongoose.model('Activity', ActivitySchema);
