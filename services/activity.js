@@ -14,68 +14,79 @@ const typeCodesString = typeCodes
 
 const cityCodeString = `cityCodes=${cityCodes.Helsinki}`;
 
-const URL = `${process.env.API_URL}sports-places?lang=en&${fieldsString}&${cityCodeString}`;
+const limitPerPage = 100;
 
-const fetchActivities = async () => {
+const fetchActivities = async (pageNo = 1) => {
+  const URL = `${process.env.API_URL}sports-places?lang=en&page=${pageNo}&pageSize=${limitPerPage}&${fieldsString}&${cityCodeString}`;
   const activities = await fetchResources(URL);
   return activities;
 };
 
-const writeToDB = async (req, res) => {
-  const activities = await fetchActivities();
+const getEntireActivityList = async (pageNo = 1) => {
+  try {
+    console.log('Retreiving data from API for page : ', pageNo);
+
+    const results = await fetchActivities(pageNo);
+
+    if (results.length > 0) {
+      return results.concat(await getEntireActivityList(pageNo + 1));
+    }
+    console.log('Data fetch complete');
+    return results;
+  } catch (err) {
+    throw new Error('Error fetching data from external API', err);
+  }
+};
+
+const writeActivities = async (req, res) => {
+  const activities = await getEntireActivityList();
+
+  console.log('activity collection', activities);
+
+  Activity.collection.drop(); // Drop table before writing
 
   try {
     activities.forEach(async (activity) => {
       const myActivity = new Activity({
-        ...(activity.name && { name: activity.name }),
-        sportType: activity.type.name,
-        coordinates: activity.location.coordinates.wgs84,
-        infoFi: activity.properties.infoFi,
-        contact: {
-          ...(activity.email && {
-            email: activity.email,
-          }),
-          ...(activity.phoneNumber && {
-            phone: activity.phoneNumber,
-          }),
-          ...(activity.www && {
-            webAddress: activity.www,
-          }),
-        },
-        address: {
-          ...(activity.location.address && {
-            address: activity.location.address,
-          }),
-          ...(activity.location.postalCode && {
-            postalCode: activity.location.postalCode,
-          }),
-          ...(activity.location.postalOffice && {
-            postalOffice: activity.location.postalOffice,
-          }),
-          ...(activity.location.city.name && {
-            city: activity.location.city.name,
-          }),
-          ...(activity.location.neighborhood && {
-            neighborhood: activity.location.neighborhood,
-          }),
+        ...activity,
+        location: {
+          address: activity.location.address,
+          coordinates: activity.location.coordinates.wgs84,
         },
       });
-
-      await myActivity.save();
-      mongoose.set('debug', true);
+      await myActivity.save((err, doc) => {
+        if (err) return console.err(err);
+        //  console.log('Document inserted succussfully!');
+      });
     });
-    res.send('Data successfully saved');
+
+    res.send('Activities inserted succussfully!');
   } catch (err) {
-    console.log('Error while saving', err);
+    throw new Error('Error while saving to activities', err);
+  }
+};
+
+const searchActivityWithCode = async (code) => {
+  try {
+    const result = await Activity.find({ 'type.typeCode': { $eq: code } }); // The $eq query operator checks exact equality
+    return result;
+  } catch (err) {
+    throw new Error('Error while activity search');
   }
 };
 
 const getAll = async () => {
   try {
-    return await Activity.find()
+    return await Activity.find();
   } catch (err) {
     throw new Error('Failed to get data from database', err);
   }
 };
 
-export { writeToDB, getAll };
+export {
+  writeActivities,
+  getAll,
+  fetchActivities,
+  getEntireActivityList,
+  searchActivityWithCode,
+};
