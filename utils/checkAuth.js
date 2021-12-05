@@ -13,6 +13,7 @@ const checkAuth = (req, res, next) => {
     passport.authenticate('jwt', (err, user) => {
       if (err || !user) {
         reject('Not authenticated or user expired');
+        return res.status(401).send('user expired!')
       }
       resolve(user);
       next();
