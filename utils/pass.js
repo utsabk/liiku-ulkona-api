@@ -61,18 +61,14 @@ passport.use(
       secretOrKey: process.env.SECRET_KEY,
     },
     async (jwtPayload, done) => {
-      console.log('payload', jwtPayload);
-
       try {
         const strippedUser = await User.findById(
           jwtPayload._id,
-          '-password-__v'
+          '-password -__v'
         );
-
-        console.log('str user', strippedUser);
         return done(null, strippedUser);
       } catch (e) {
-        return done(null, false);
+        return done(err, false);
       }
     }
   )

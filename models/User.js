@@ -6,7 +6,7 @@ const userSchema = new Schema({
   username: String,
   email: String,
   password: String,
-  points: Number,
+  points: { type: Number, default: 0 },
 });
 
 export default mongoose.model('User', userSchema);
