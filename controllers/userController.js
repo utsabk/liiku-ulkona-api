@@ -12,7 +12,21 @@ export const userWithId = async (req, res, next) => {
 
     res.json({ ...strippedUser });
   } catch (err) {
-    console.log('Error getting user:-', err);
+    console.log('Error getting user with Id:-', err);
+    next(err);
+  }
+};
+
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({},{
+        _id: 0,
+        username: 1,
+        points: 1,
+      });
+    res.json(users);
+  } catch (err) {
+    console.log('Error getting all user:-', err);
     next(err);
   }
 };
