@@ -19,11 +19,11 @@ export const userWithId = async (req, res, next) => {
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find({},{
-        _id: 0,
+      const users = await User.find({},{
         username: 1,
         points: 1,
-      });
+      },{sort:{'points':'descending'}});
+
     res.json(users);
   } catch (err) {
     console.log('Error getting all user:-', err);

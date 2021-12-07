@@ -26,7 +26,7 @@ passport.use(
         // Array destructuring to select only user from returned array
         const user = await User.findOne({ email: email });
         if (user == undefined) {
-          return done(null, false, { message: 'Incorrect email.' });
+          return done(null, false, { message: 'Incorrect email' });
         }
         if (!(await bcrypt.compare(password, user.password))) {
           return done(null, false, { message: ' Incorrect password' });

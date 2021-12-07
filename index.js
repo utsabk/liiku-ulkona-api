@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use('/activity', activityRoutes);
 app.use('/auth', authRoutes);
-app.use('/user', userRoutes);
+app.use('/users', userRoutes);
 
 app.get('/write-activities', writeActivities);
 app.get('/write-activity-types', writeActivityTypes);
