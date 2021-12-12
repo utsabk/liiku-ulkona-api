@@ -8,6 +8,33 @@ REST API for [Liiku-ulkona-app](https://github.com/utsabk/liiku-ulkona-app) that
     </a>
 </p>
 
+## ✔️ Requirements
+
+Node (versions `14.X.X` are tested, but later versions _might_ work as well) and npm. If you haven't installed Node or npm, [nvm](https://github.com/nvm-sh/nvm) is an easy to use tool for installing both. Nvm is also handy if you want to quickly switch between different Node versions.
+
+# Getting started
+
+### Clone
+
+To get the Node server running locally.
+
+```sh
+git clone git@github.com:utsabk/liiku-ulkona-api.git
+cd liiku-ulkona-api
+```
+
+### Set up the local environment
+Create a file `.env` in the `liiku-ulkona-api` directory and copy the contents of the `.env.template` file there. In the `.env` file, replace `DB_URL` variable values with your MongoDB URL. If you want, you can also use a different secret for the `JWT_SECRET` variable, which is used to sign access tokens.
+
+All done! Just run following commands on project path
+
+```sh
+$ npm install
+$ npm start
+```
+Your app should now be running on [localhost:8000](http://localhost:8000/)
+
+
 ## Endpoints
 ### GET /activities
 Returns a list of sport places. Example:
@@ -108,3 +135,4 @@ Returns list of all registered users. Example:
 
 ### GET /users/<***user-id***>
 Returns a single user.
+
